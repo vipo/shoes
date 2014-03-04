@@ -11,19 +11,39 @@ data-files:
 library
   hs-source-dirs: lib
   build-depends:
-    base -any
-    , happstack >= 7.0.1
-    , happstack-server >= 7.0.1
+    base == 4.*
+    , happstack-server == 7.3.3
+    -- patched happstack-fastcgi
+    , cgi >= 3000.0.0
+    , fastcgi >= 3001.0.2
+    , mtl
+    , happstack-server >= 7
+    , containers >= 0.2.0
+    , utf8-string >= 0.3.4
+    , bytestring
   exposed-modules:
     Shoes.Router
+    , Happstack.Server.FastCGI
 
 executable shoes-server
   main-is: Main.hs
   buildable: True
   hs-source-dirs: server
   build-depends:
-    base -any
+    base == 4.*
     , shoes >= 0.1
-    , happstack-server >= 7.0.1
+    , happstack-server == 7.3.3
   ghc-options: -threaded -Wall -fwarn-tabs -funbox-strict-fields -O2
+    -fno-warn-unused-do-bind
+
+executable shoes-fcgi
+  main-is: Main.hs
+  buildable: True
+  hs-source-dirs: fcgi
+  build-depends:
+    base == 4.*
+    , shoes >= 0.1
+    , happstack-server == 7.3.3
+    , fastcgi == 3001.0.2.4
+  ghc-options: -Wall -fwarn-tabs -funbox-strict-fields -O2
     -fno-warn-unused-do-bind

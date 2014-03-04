@@ -1,4 +1,3 @@
-{-# LANGUAGE FlexibleContexts #-}
 module Shoes.Router where
 
 import Happstack.Server (ok)
