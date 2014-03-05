@@ -23,6 +23,7 @@ library
     , bytestring
   exposed-modules:
     Shoes.Router
+    , Shoes.Conf
     , Happstack.Server.FastCGI
 
 executable shoes-server
