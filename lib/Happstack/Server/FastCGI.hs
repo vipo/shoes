@@ -23,7 +23,7 @@ import Happstack.Server.Types (Request (..), HttpVersion (HttpVersion))
 import Happstack.Server.Internal.Monads(runServerPartT)
 import Network.CGI.Monad (CGIRequest, cgiVars, cgiRequestBody, cgiGet)
 import Happstack.Server.Internal.Cookie (parseCookies)
-import Control.Concurrent.MVar (newMVar, MVar(..))
+import Control.Concurrent.MVar (newMVar, newEmptyMVar, MVar(..))
 import Network.CGI.Protocol (maybeRead)
 import Network.FastCGI
 import qualified Data.ByteString.Lazy as BS
@@ -61,6 +61,7 @@ toHappstackRequest :: CGIRequest -> CGI Request
 toHappstackRequest rq = do
   i <- cgiInputs
   b <- cgiBody rq
+  ib <- cgiInputsBody rq
   return $ Request { rqMethod  = cgiMethod  rq
                    , rqPaths   = cgiPaths   rq
                    , rqUri	   = cgiUri     rq
@@ -71,6 +72,8 @@ toHappstackRequest rq = do
                    , rqHeaders = cgiHeaders rq
                    , rqBody    = b
                    , rqPeer    = cgiPeer    rq
+                   , rqSecure  = cgiSecure  rq
+                   , rqInputsBody = ib
                    }
 
 -- | Lookup a variable in the cgiVars
@@ -121,6 +124,11 @@ cgiBody = liftIO . newMVar . Body . cgiRequestBody
 cgiPeer :: CGIRequest -> (String, Int)
 cgiPeer r = (str "REMOTE_ADDR" r, withDef 0 (r ? "REMOTE_PORT" >>= maybeRead)) -- TODO
 
+cgiSecure :: CGIRequest -> Bool
+cgiSecure _ = False
+
+cgiInputsBody :: CGIRequest -> CGI (MVar [(String, Input)])
+cgiInputsBody _ = liftIO $ newEmptyMVar
 
 -- | Replace x by y in a map
 replace :: (Eq a) => a -> a -> [a] -> [a]

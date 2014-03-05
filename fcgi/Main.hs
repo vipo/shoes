@@ -15,4 +15,4 @@ main = do
   env <- getEnvironment
   case (lookup urlBaseEnvKey env) of
     Nothing -> exitWith $ ExitFailure 42
-    Just (urlBase) -> runFastCGI $ serverPartToCGI $ router $ defaultAppConf {urlBase = urlBase}
+    Just (ub) -> runFastCGI $ serverPartToCGI $ router $ defaultAppConf {urlBase = ub}
