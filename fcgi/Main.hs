@@ -1,6 +1,7 @@
 module Main where
 
 import System.Environment(getEnvironment)
+import System.Exit(exitWith, ExitCode(ExitFailure))
 import Network.FastCGI(runFastCGI)
 import Happstack.Server.FastCGI(serverPartToCGI)
 import Shoes.Router(router)
@@ -13,5 +14,5 @@ main :: IO ()
 main = do
   env <- getEnvironment
   case (lookup urlBaseEnvKey env) of
-    Nothing -> fail ("Environment variable not found: " ++ urlBaseEnvKey)
+    Nothing -> exitWith $ ExitFailure 42
     Just (urlBase) -> runFastCGI $ serverPartToCGI $ router $ defaultAppConf {urlBase = urlBase}
