@@ -14,9 +14,9 @@ home = "list"
 
 router :: AppConfReader (ServerPart String)
 router = do
-  redirectTo <- mapReader ( ++ home) (asks urlBase)
+  homeFullPath <- mapReader ( ++ home) (asks urlBase)
   return $ msum [
       dir home $ ok "List"
       , dir "lololo" $ ok "Lololo"
-      , seeOther redirectTo redirectTo
+      , seeOther homeFullPath homeFullPath
     ]

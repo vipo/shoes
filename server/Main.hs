@@ -6,4 +6,4 @@ import Shoes.Router(router)
 import Shoes.Conf
 
 main :: IO ()
-main = simpleHTTP nullConf $ (runReader router defaultAppConf)
+main = createConf >>= (simpleHTTP nullConf) . (runReader router)
