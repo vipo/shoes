@@ -33,6 +33,7 @@ executable shoes-server
   build-depends:
     base == 4.*
     , shoes >= 0.1
+    , mtl >= 2
     , happstack-server == 7.3.3
   ghc-options: -threaded -Wall -fwarn-tabs -funbox-strict-fields -O2
     -fno-warn-unused-do-bind
@@ -44,6 +45,7 @@ executable shoes-fcgi
   build-depends:
     base == 4.*
     , shoes >= 0.1
+    , mtl >= 2
     , happstack-server == 7.3.3
     , fastcgi == 3001.0.2.4
   ghc-options: -Wall -fwarn-tabs -funbox-strict-fields -O2

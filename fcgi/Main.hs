@@ -2,6 +2,7 @@ module Main where
 
 import System.Environment(getEnvironment)
 import System.Exit(exitWith, ExitCode(ExitFailure))
+import Control.Monad.Reader
 import Network.FastCGI(runFastCGI)
 import Happstack.Server.FastCGI(serverPartToCGI)
 import Shoes.Router(router)
@@ -15,4 +16,5 @@ main = do
   env <- getEnvironment
   case (lookup urlBaseEnvKey env) of
     Nothing -> exitWith $ ExitFailure 42
-    Just (ub) -> runFastCGI $ serverPartToCGI $ router $ defaultAppConf {urlBase = ub}
+    Just (ub) -> runFastCGI $ serverPartToCGI $
+      runReader router $ defaultAppConf {urlBase = ub}

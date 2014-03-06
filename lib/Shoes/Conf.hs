@@ -1,5 +1,9 @@
 module Shoes.Conf where
 
+import Control.Monad.Reader
+
+type AppConfReader = Reader AppConf
+
 data AppConf = AppConf {
   urlBase :: String
   , dataDir :: String
