@@ -2,6 +2,7 @@ module Shoes.Conf where
 
 import Control.Monad.Reader
 import System.Environment(getEnvironment)
+import System.Directory
 import Data.Maybe
 
 urlBaseEnvKey :: String
@@ -17,13 +18,12 @@ data AppConf = AppConf {
   , workDir :: String
 } deriving Show
 
-defaultAppConf :: AppConf
-defaultAppConf = AppConf {urlBase = "/", workDir = "/var/shoes"}
-
 createConf :: IO AppConf
 createConf = do
   env <- getEnvironment
+  let currDir = fromMaybe "/var/shoes/" (lookup workDirEnvKey env)
+  setCurrentDirectory currDir
   return $ AppConf {
     urlBase = fromMaybe "/" (lookup urlBaseEnvKey env)
-    , workDir = fromMaybe "/var/shoes" (lookup workDirEnvKey env)
+    , workDir = currDir
   }

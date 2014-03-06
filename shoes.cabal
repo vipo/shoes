@@ -13,6 +13,7 @@ library
   build-depends:
     base == 4.*
     , happstack-server == 7.3.3
+    , directory >= 1
     -- patched happstack-fastcgi
     , cgi >= 3000.0.0
     , fastcgi >= 3001.0.2
