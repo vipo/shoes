@@ -14,18 +14,14 @@ library
     base == 4.*
     , happstack-server == 7.3.3
     , directory >= 1
-    -- patched happstack-fastcgi
-    , cgi >= 3000.0.0
-    , fastcgi >= 3001.0.2
-    , mtl
-    , happstack-server >= 7
-    , containers >= 0.2.0
-    , utf8-string >= 0.3.4
-    , bytestring
+    , safecopy == 0.8.2
+    , acid-state == 0.12.1
+    , ixset >= 1.0.5
+    , mtl >= 2
   exposed-modules:
     Shoes.Router
-    , Shoes.Conf
-    , Happstack.Server.FastCGI
+    , Shoes.Environment
+    , Shoes.Domain.Data
 
 executable shoes-server
   main-is: Main.hs
@@ -36,7 +32,9 @@ executable shoes-server
     , shoes >= 0.1
     , mtl >= 2
     , happstack-server == 7.3.3
-  ghc-options: -threaded -Wall -fwarn-tabs -funbox-strict-fields -O2
+    , acid-state == 0.12.1
+  ghc-options: -Wall -fwarn-tabs
+    -funbox-strict-fields -O2
     -fno-warn-unused-do-bind
 
 executable shoes-fcgi
@@ -49,5 +47,8 @@ executable shoes-fcgi
     , mtl >= 2
     , happstack-server == 7.3.3
     , fastcgi == 3001.0.2.4
-  ghc-options: -Wall -fwarn-tabs -funbox-strict-fields -O2
+    , happstack-fastcgi == 0.1.5
+    , acid-state == 0.12.1
+  ghc-options: -Wall -fwarn-tabs
+    -funbox-strict-fields -O2
     -fno-warn-unused-do-bind
