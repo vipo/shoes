@@ -1,13 +1,14 @@
 module Shoes.Environment where
 
 import Control.Monad.Reader
+import Control.Applicative((<*>))
 import System.Environment(getEnvironment)
 import System.Directory
 import Control.Exception(bracket)
 import Data.Maybe
 import Data.Acid(AcidState)
-
-import Shoes.Domain.Data
+import Data.Acid.Local(openLocalState, createCheckpointAndClose)
+import Shoes.Storage
 
 urlBaseEnvKey :: String
 urlBaseEnvKey = "SHOES_URL_BASE"
@@ -26,13 +27,19 @@ data AppConf = AppConf {
 initWorkDir :: (String -> AcidState ShoeStorage -> AppConf) -> IO (AcidState ShoeStorage -> AppConf)
 initWorkDir conf = do
   env <- getEnvironment
-  let workDir = fromMaybe "/var/tmp/shoes/" (lookup workDirEnvKey env)
-  createDirectoryIfMissing False workDir
-  setCurrentDirectory workDir
-  return $ conf workDir
+  let wd = fromMaybe "/var/tmp/shoes/" (lookup workDirEnvKey env)
+  createDirectoryIfMissing False wd
+  setCurrentDirectory wd
+  return $ conf wd
 
 initConf :: IO (String -> AcidState ShoeStorage -> AppConf)
 initConf = do
   env <- getEnvironment
-  let urlBase = fromMaybe "/" (lookup urlBaseEnvKey env)
-  return $ AppConf urlBase
+  let ub = fromMaybe "/" (lookup urlBaseEnvKey env)
+  return $ AppConf ub
+
+run :: (AppConf -> IO ()) -> IO ()
+run action = bracket
+  ((initConf >>= initWorkDir) <*> (openLocalState initialDataState))
+  (createCheckpointAndClose . acidState)
+  action

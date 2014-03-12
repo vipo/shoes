@@ -2,16 +2,13 @@
   GeneralizedNewtypeDeriving, MultiParamTypeClasses,
   TemplateHaskell, TypeFamilies, RecordWildCards #-}
 
-module Shoes.Domain.Data where
+module Shoes.Storage where
 
-import Control.Applicative((<$>))
 import Control.Monad.Reader(ask)
-import Control.Monad.State(get, put)
 import Data.Data(Data,Typeable)
-import Data.Acid(AcidState, Query, Update, makeAcidic, openLocalState)
-import Data.Acid.Advanced(query', update')
+import Data.Acid(Query, makeAcidic)
 import Data.SafeCopy(base, deriveSafeCopy)
-import Data.IxSet(Indexable(..), IxSet(..), (@=), Proxy(..), getOne, ixFun, ixSet, toList, toDescList)
+import Data.IxSet(Indexable(..), IxSet, (@=), Proxy(..), ixFun, ixSet, toDescList)
 
 data ShoeData = ShoeData {
   shoeId :: String
@@ -23,7 +20,7 @@ data ShoeData = ShoeData {
 $(deriveSafeCopy 0 'base ''ShoeData)
 
 data ShoeStorage = ShoeStorage {
-  seq :: Int
+  counter :: Int
   , shoeSet :: IxSet ShoeData
 } deriving (Eq, Ord, Show, Data, Typeable)
 $(deriveSafeCopy 0 'base ''ShoeStorage)
