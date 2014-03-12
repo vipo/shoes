@@ -19,20 +19,23 @@ workDirEnvKey = "SHOES_WORK_DIR"
 type AppConfReader = Reader AppConf
 
 data AppConf = AppConf {
-  urlBase :: String
+    urlBase :: String
   , workDir :: String
+  , imgsDir :: String
   , acidState :: AcidState ShoeStorage
 }
 
-initWorkDir :: (String -> AcidState ShoeStorage -> AppConf) -> IO (AcidState ShoeStorage -> AppConf)
-initWorkDir conf = do
+initDirs :: (String -> String -> AcidState ShoeStorage -> AppConf) -> IO (AcidState ShoeStorage -> AppConf)
+initDirs conf = do
   env <- getEnvironment
-  let wd = fromMaybe "/var/tmp/shoes/" (lookup workDirEnvKey env)
-  createDirectoryIfMissing False wd
-  setCurrentDirectory wd
-  return $ conf wd
+  let workd = fromMaybe "/var/tmp/shoes/" (lookup workDirEnvKey env)
+  createDirectoryIfMissing False workd
+  setCurrentDirectory workd
+  let imgsd = workd ++ "imgs/"
+  createDirectoryIfMissing False imgsd
+  return $ conf workd imgsd
 
-initConf :: IO (String -> AcidState ShoeStorage -> AppConf)
+initConf :: IO (String -> String -> AcidState ShoeStorage -> AppConf)
 initConf = do
   env <- getEnvironment
   let ub = fromMaybe "/" (lookup urlBaseEnvKey env)
@@ -40,6 +43,6 @@ initConf = do
 
 run :: (AppConf -> IO ()) -> IO ()
 run action = bracket
-  ((initConf >>= initWorkDir) <*> (openLocalState initialDataState))
+  ((initConf >>= initDirs) <*> (openLocalState initialDataState))
   (createCheckpointAndClose . acidState)
   action

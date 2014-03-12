@@ -10,17 +10,20 @@ import Data.Acid(Query, makeAcidic)
 import Data.SafeCopy(base, deriveSafeCopy)
 import Data.IxSet(Indexable(..), IxSet, (@=), Proxy(..), ixFun, ixSet, toDescList)
 
+type ShoeId = String
+type ShoePhotoFileName = String
+
 data ShoeData = ShoeData {
-  shoeId :: String
-  , description :: String
+    description :: String
   , color :: String
-  , size :: Integer
-  , photoFileName :: String
+  , size :: String
+  , photoFileName :: ShoePhotoFileName
+  , shoeId :: ShoeId
 } deriving (Eq, Ord, Show, Data, Typeable)
 $(deriveSafeCopy 0 'base ''ShoeData)
 
 data ShoeStorage = ShoeStorage {
-  counter :: Int
+    counter :: Integer
   , shoeSet :: IxSet ShoeData
 } deriving (Eq, Ord, Show, Data, Typeable)
 $(deriveSafeCopy 0 'base ''ShoeStorage)
