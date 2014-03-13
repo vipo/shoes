@@ -6,4 +6,4 @@ import Shoes.Environment(run)
 import Happstack.Server.FastCGI
 
 main :: IO ()
-main = run (runFastCGI . serverPartToCGI . (runReader router))
+main = run (runFastCGI . serverPartToCGI . router)

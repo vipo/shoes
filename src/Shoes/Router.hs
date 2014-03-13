@@ -11,11 +11,9 @@ import Happstack.Server.Routing(methodM)
 home :: String
 home = "list"
 
-router :: AppConfReader (ServerPart String)
-router = do
-  homeFullPath <- mapReader ( ++ home) (asks urlBase)
-  return $ msum [
-        dir home $ methodM GET >> listShoes
-      , dir home $ methodM POST >> postShoeAsJson
-      , seeOther homeFullPath homeFullPath
-    ]
+router :: AppConf -> ServerPart String
+router conf = msum [
+      dir home $ methodM GET >> listShoes
+    , dir home $ methodM POST >> postShoeAsJson conf
+    , seeOther homeFullPath homeFullPath
+  ] where homeFullPath = (urlBase conf) ++ home

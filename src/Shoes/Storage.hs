@@ -5,20 +5,21 @@
 module Shoes.Storage where
 
 import Control.Monad.Reader(ask)
+import Control.Monad.State(get, put)
 import Data.Data(Data,Typeable)
-import Data.Acid(Query, makeAcidic)
+import Data.Acid(Query, Update, makeAcidic)
 import Data.SafeCopy(base, deriveSafeCopy)
-import Data.IxSet(Indexable(..), IxSet, (@=), Proxy(..), ixFun, ixSet, toDescList)
+import Data.IxSet(Indexable(..), IxSet, (@=), Proxy(..), ixFun, ixSet, toDescList, insert)
 
 type ShoeId = String
 type ShoePhotoFileName = String
 
 data ShoeData = ShoeData {
-    description :: String
+    shoeId :: ShoeId
+  , description :: String
   , color :: String
   , size :: String
   , photoFileName :: ShoePhotoFileName
-  , shoeId :: ShoeId
 } deriving (Eq, Ord, Show, Data, Typeable)
 $(deriveSafeCopy 0 'base ''ShoeData)
 
@@ -33,7 +34,18 @@ fetchAll = do
   ShoeStorage{..} <- ask
   return $ toDescList (Proxy :: Proxy String) $ shoeSet @= shoeId
 
-$(makeAcidic ''ShoeStorage ['fetchAll])
+insertShoe :: ShoeData -> Update ShoeStorage ShoeId
+insertShoe shoe = do
+  s <- get
+  let newCounter = succ $ counter s
+  let newShoeId = show newCounter
+  put $ s {
+      counter = newCounter
+    , shoeSet = insert (shoe { shoeId = newShoeId}) (shoeSet s)
+  }
+  return newShoeId
+
+$(makeAcidic ''ShoeStorage ['fetchAll, 'insertShoe])
 
 instance Indexable ShoeData where
   empty = ixSet

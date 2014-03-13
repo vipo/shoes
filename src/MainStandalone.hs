@@ -6,4 +6,4 @@ import Shoes.Router(router)
 import Shoes.Environment(run)
 
 main :: IO ()
-main = run ((simpleHTTP nullConf) . (runReader router))
+main = run ((simpleHTTP nullConf) . router)

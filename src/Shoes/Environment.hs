@@ -16,8 +16,6 @@ urlBaseEnvKey = "SHOES_URL_BASE"
 workDirEnvKey :: String
 workDirEnvKey = "SHOES_WORK_DIR"
 
-type AppConfReader = Reader AppConf
-
 data AppConf = AppConf {
     urlBase :: String
   , workDir :: String
