@@ -1,4 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
+
 module Shoes.Controller(postShoeAsJson, listShoes, showShoe) where
 
 import Happstack.Server (notFound, ok, badRequest, Response, toResponse, FromReqURI(..))
@@ -57,10 +59,10 @@ postShoeAsJson conf = do
   bytes <- getBodyBytes
   let jsonObject = decode bytes :: Maybe JsonRequest
   case jsonObject of
-  	Nothing -> badRequestMsg "Could not parse json request"
-  	Just o -> case (photo o) of
-  	  Left msg -> badRequestMsg $ "Bad photo encoding: " ++ msg
-  	  Right bytes -> storeData conf (newShoe (description o) (color o) (size o)) bytes
+    Nothing -> badRequestMsg "Could not parse json request"
+    Just o -> case (photo o) of
+      Left m -> badRequestMsg $ "Bad photo encoding: " ++ m
+      Right b -> storeData conf (newShoe (description o) (color o) (size o)) b
 
 storeData :: AppConf -> (ShoePhotoFileName -> ShoeData) -> B.ByteString -> ServerPart Response
 storeData conf shoeData photoBytes = do

@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Shoes.Pages.Items(page) where
 
-import Control.Monad (forM_, when)
+import Control.Monad (forM_)
 import Text.Blaze ((!))
 import qualified Text.Blaze.Html4.Strict as H
 import qualified Text.Blaze.Html4.Strict.Attributes as A

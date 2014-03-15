@@ -1,6 +1,5 @@
 module Main where
 
-import Control.Monad.Reader
 import Shoes.Router(router)
 import Shoes.Environment(run)
 import Happstack.Server.FastCGI

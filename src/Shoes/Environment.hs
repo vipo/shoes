@@ -1,6 +1,5 @@
 module Shoes.Environment where
 
-import Control.Monad.Reader
 import Control.Applicative((<*>))
 import System.Environment(getEnvironment)
 import System.Directory
