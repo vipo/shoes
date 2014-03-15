@@ -18,9 +18,6 @@ urlBaseEnvKey = "SHOES_URL_BASE"
 workDirEnvKey :: String
 workDirEnvKey = "SHOES_WORK_DIR"
 
-fileServerEnvKey :: String
-fileServerEnvKey = "SHOES_FILE_SERVER"
-
 data AppConf = AppConf {
     urlBase :: String
   , staticDir :: String
