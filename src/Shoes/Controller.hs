@@ -3,7 +3,7 @@
 
 module Shoes.Controller(postShoeAsJson, listShoes, showShoe) where
 
-import Happstack.Server (notFound, ok, badRequest, Response, toResponse, FromReqURI(..))
+import Happstack.Server (notFound, ok, badRequest, Response, toResponse, ToMessage, FromReqURI(..))
 import Happstack.Server.SimpleHTTP (ServerPart, askRq, takeRequestBody, unBody)
 import qualified Data.ByteString.Lazy.Char8 as L
 import qualified Data.ByteString.Lazy as B
@@ -43,17 +43,20 @@ instance FromReqURI ShoeId where
       ((shoeNo, ""):_) -> Just (ShoeId shoeNo)
       _ -> Nothing
 
+instance ToMessage ShoeId where
+  toResponse = toResponse . show
+
 showShoe :: AppConf -> ShoeId -> ServerPart Response
 showShoe conf shoeId = do
   shoe <- query' (acidState conf) $ FetchOne shoeId
   case shoe of
     Nothing -> notFound (toResponse())
-    Just s -> ok $ toResponse $ Item.page s
+    Just s -> okResp $ Item.page s
 
 listShoes :: AppConf-> ServerPart Response
 listShoes conf = do
   shoes <- query' (acidState conf) FetchAll
-  ok $ toResponse $ Items.page shoes
+  okResp $ Items.page shoes
 
 postShoeAsJson :: AppConf -> ServerPart Response
 postShoeAsJson conf = do
@@ -63,16 +66,15 @@ postShoeAsJson conf = do
     Nothing -> badRequestMsg "Could not parse json request"
     Just o -> case (photo o) of
       Left m -> badRequestMsg $ "Bad photo encoding: " ++ m
-      Right b -> storeData conf (ShoeData (description o) (color o) (size o)) b
+      Right b -> storeData conf (ShoeData (description o) (color o) (size o)) b >>= okResp
 
-storeData :: AppConf -> (ShoePhotoFileName -> ShoeData) -> B.ByteString -> ServerPart Response
+storeData :: AppConf -> (ShoePhotoFileName -> ShoeData) -> B.ByteString -> ServerPart ShoeId
 storeData conf shoeData photoBytes = do
   uuid <- liftIO nextRandom
   let photoFileName = (toString uuid) ++ ".jpg"
   let photoFullPath = (imgsDir conf) ++ photoFileName
   liftIO $ B.writeFile photoFullPath photoBytes
-  shoeId <- update' (acidState conf) $ InsertShoe (shoeData photoFileName)
-  ok $ toResponse $ show $ shoeId
+  (update' (acidState conf) $ InsertShoe (shoeData photoFileName)) >>= return
 
 getBodyBytes :: ServerPart L.ByteString
 getBodyBytes = do
@@ -84,3 +86,6 @@ getBodyBytes = do
 
 badRequestMsg :: String -> ServerPart Response
 badRequestMsg s = badRequest $ toResponse (L.pack s)
+
+okResp :: (ToMessage a) => a -> ServerPart Response
+okResp = ok . toResponse
