@@ -16,7 +16,6 @@ import Control.Monad.IO.Class (liftIO)
 import Control.Monad (liftM, mzero)
 import Control.Applicative ((<*>), (<$>))
 
-import Shoes.Acid(InsertShoe(..), FetchAll(..), FetchOne(..))
 import Shoes.Domain.Conf
 import Shoes.Domain.Model(ShoeData(ShoeData), ShoeId(..), ShoePhotoFileName)
 import Shoes.Acid

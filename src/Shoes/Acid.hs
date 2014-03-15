@@ -1,15 +1,15 @@
 {-# LANGUAGE DeriveDataTypeable, GeneralizedNewtypeDeriving,
   RecordWildCards, TemplateHaskell, TypeFamilies,
   OverloadedStrings #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Shoes.Acid where
 
 import Control.Monad.Reader(ask)
 import Control.Monad.State(get, put)
-import Data.Data(Data,Typeable)
 import Data.Acid(Query, Update, makeAcidic)
-import Data.SafeCopy(base, deriveSafeCopy, SafeCopy)
-import Data.IxSet(Indexable(..), IxSet, (@>), (@=), Proxy(..), ixFun, ixSet, getOne, toDescList, insert)
+import Data.SafeCopy(base, deriveSafeCopy)
+import Data.IxSet(Indexable(..), (@>), (@=), Proxy(..), ixFun, ixSet, getOne, toDescList, insert)
 
 import Shoes.Domain.Model
 
