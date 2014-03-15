@@ -52,7 +52,7 @@ showShoe conf shoeId = do
 listShoes :: AppConf-> ServerPart Response
 listShoes conf = do
   shoes <- query' (acidState conf) FetchAll
-  ok $ toResponse $ Items.page shoes
+  ok $ toResponse $ Items.page conf shoes
 
 postShoeAsJson :: AppConf -> ServerPart Response
 postShoeAsJson conf = do

@@ -7,6 +7,8 @@ license-file: ""
 category: Web Application
 author: Viaceslav Pozdniakov
 data-files:
+  static/flag
+  , static/pure-min.css
 
 executable shoes-server
   main-is: MainStandalone.hs
@@ -27,6 +29,7 @@ executable shoes-server
     , uuid >= 1.3.3
     , blaze-html >= 0.7
     , blaze-markup >= 0.6
+    , filepath >= 1.3
   ghc-options: -threaded -Wall
     -fwarn-tabs -funbox-strict-fields -O2
     -fno-warn-unused-do-bind
@@ -50,6 +53,7 @@ executable shoes-fcgi
     , uuid >= 1.3.3
     , blaze-html >= 0.7
     , blaze-markup >= 0.6
+    , filepath >= 1.3
     , happstack-fastcgi == 0.1.5
   ghc-options: -threaded -Wall
     -fwarn-tabs -funbox-strict-fields -O2

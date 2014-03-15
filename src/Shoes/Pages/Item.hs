@@ -11,7 +11,7 @@ import Shoes.Pages.Common(header)
 import Shoes.Environment
 
 page :: AppConf -> ShoeData -> H.Html
-page conf shoe = header $ do
+page conf shoe = header conf $ do
   H.h1 (fromString(description shoe))
   H.div ! A.class_ "pure-g-r" $ do
     H.div ! A.class_ "pure-u-2-5" $ shoeImg conf shoe
@@ -21,5 +21,5 @@ page conf shoe = header $ do
 
 shoeImg :: AppConf -> ShoeData -> H.Html
 shoeImg conf shoe = H.img !
-  A.src (fromString((fileServer conf) ++ (photoFileName shoe))) !
+  A.src (fromString((urlBase conf) ++ "img/" ++ (photoFileName shoe))) !
   A.alt (fromString(description shoe))
