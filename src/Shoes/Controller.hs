@@ -16,8 +16,10 @@ import Control.Monad.IO.Class (liftIO)
 import Control.Monad (liftM, mzero)
 import Control.Applicative ((<*>), (<$>))
 
-import Shoes.Storage(ShoeData(ShoeData), ShoeId, ShoePhotoFileName, InsertShoe(..), FetchAll(..), ShoeId(..), FetchOne(..))
-import Shoes.Environment
+import Shoes.Acid(InsertShoe(..), FetchAll(..), FetchOne(..))
+import Shoes.Domain.Conf
+import Shoes.Domain.Model(ShoeData(ShoeData), ShoeId(..), ShoePhotoFileName)
+import Shoes.Acid
 import qualified Shoes.Pages.Items as Items
 import qualified Shoes.Pages.Item as Item
 

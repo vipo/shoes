@@ -9,18 +9,13 @@ import Data.Maybe
 import Data.Acid(AcidState)
 import Data.Acid.Local(openLocalState, createCheckpointAndClose)
 
-import Shoes.Storage
+import Shoes.Domain.Conf
+import Shoes.Domain.Model
+import Shoes.Acid(initialDataState)
 import qualified Paths_shoes
 
 workDirEnvKey :: String
 workDirEnvKey = "SHOES_WORK_DIR"
-
-data AppConf = AppConf {
-  staticDir :: String
-  , workDir :: String
-  , imgsDir :: String
-  , acidState :: AcidState ShoeStorage
-}
 
 initDirs :: (String -> String -> AcidState ShoeStorage -> AppConf) -> IO (AcidState ShoeStorage -> AppConf)
 initDirs conf = do

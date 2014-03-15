@@ -2,7 +2,7 @@
   RecordWildCards, TemplateHaskell, TypeFamilies,
   OverloadedStrings #-}
 
-module Shoes.Storage where
+module Shoes.Acid where
 
 import Control.Monad.Reader(ask)
 import Control.Monad.State(get, put)
@@ -11,24 +11,9 @@ import Data.Acid(Query, Update, makeAcidic)
 import Data.SafeCopy(base, deriveSafeCopy, SafeCopy)
 import Data.IxSet(Indexable(..), IxSet, (@>), (@=), Proxy(..), ixFun, ixSet, getOne, toDescList, insert)
 
-type ShoePhotoFileName = String
+import Shoes.Domain.Model
 
-newtype ShoeId = ShoeId Integer
-  deriving (Eq, Ord, Data, Typeable, SafeCopy, Show)
-
-data ShoeData = ShoeData {
-    shoeId :: Integer
-  , description :: String
-  , color :: String
-  , size :: String
-  , photoFileName :: ShoePhotoFileName
-} deriving (Eq, Ord, Show, Data, Typeable)
 $(deriveSafeCopy 0 'base ''ShoeData)
-
-data ShoeStorage = ShoeStorage {
-    lastId :: Integer
-  , shoeSet :: IxSet ShoeData
-} deriving (Eq, Ord, Show, Data, Typeable)
 $(deriveSafeCopy 0 'base ''ShoeStorage)
 
 fetchAll :: Query ShoeStorage [ShoeData]

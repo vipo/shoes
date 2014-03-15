@@ -6,7 +6,7 @@ import qualified Text.Blaze.Html4.Strict as H
 import qualified Text.Blaze.Html4.Strict.Attributes as A
 import Data.String(fromString)
 
-import Shoes.Storage
+import Shoes.Domain.Model
 import Shoes.Pages.Common(header)
 
 page :: ShoeData -> H.Html

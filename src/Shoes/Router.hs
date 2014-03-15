@@ -1,6 +1,6 @@
 module Shoes.Router where
 
-import Shoes.Environment
+import Shoes.Domain.Conf
 import Shoes.Controller
 import Control.Monad.Reader
 import Happstack.Server (dir, seeOther, Response, toResponse, path, serveDirectory, Browsing(DisableBrowsing))
