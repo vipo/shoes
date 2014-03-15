@@ -47,12 +47,12 @@ showShoe conf shoeId = do
   shoe <- query' (acidState conf) $ FetchOne shoeId
   case shoe of
     Nothing -> notFound (toResponse())
-    Just s -> ok $ toResponse $ Item.page conf s
+    Just s -> ok $ toResponse $ Item.page s
 
 listShoes :: AppConf-> ServerPart Response
 listShoes conf = do
   shoes <- query' (acidState conf) FetchAll
-  ok $ toResponse $ Items.page conf shoes
+  ok $ toResponse $ Items.page shoes
 
 postShoeAsJson :: AppConf -> ServerPart Response
 postShoeAsJson conf = do

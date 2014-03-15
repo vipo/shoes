@@ -8,18 +8,17 @@ import Data.String(fromString)
 
 import Shoes.Storage
 import Shoes.Pages.Common(header)
-import Shoes.Environment
 
-page :: AppConf -> ShoeData -> H.Html
-page conf shoe = header conf $ do
+page :: ShoeData -> H.Html
+page shoe = header $ do
   H.h1 (fromString(description shoe))
   H.div ! A.class_ "pure-g-r" $ do
-    H.div ! A.class_ "pure-u-2-5" $ shoeImg conf shoe
+    H.div ! A.class_ "pure-u-2-5" $ shoeImg shoe
     H.div ! A.class_ "pure-u-3-5" $ do
       H.p $ fromString ("Size: " ++ (size shoe))
       H.p $ fromString ("Color: " ++ (color shoe))
 
-shoeImg :: AppConf -> ShoeData -> H.Html
-shoeImg conf shoe = H.img !
-  A.src (fromString((urlBase conf) ++ "img/" ++ (photoFileName shoe))) !
+shoeImg :: ShoeData -> H.Html
+shoeImg shoe = H.img !
+  A.src (fromString("/img/" ++ (photoFileName shoe))) !
   A.alt (fromString(description shoe))

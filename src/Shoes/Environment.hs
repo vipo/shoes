@@ -12,15 +12,11 @@ import Data.Acid.Local(openLocalState, createCheckpointAndClose)
 import Shoes.Storage
 import qualified Paths_shoes
 
-urlBaseEnvKey :: String
-urlBaseEnvKey = "SHOES_URL_BASE"
-
 workDirEnvKey :: String
 workDirEnvKey = "SHOES_WORK_DIR"
 
 data AppConf = AppConf {
-    urlBase :: String
-  , staticDir :: String
+  staticDir :: String
   , workDir :: String
   , imgsDir :: String
   , acidState :: AcidState ShoeStorage
@@ -38,10 +34,8 @@ initDirs conf = do
 
 initConf :: IO (String -> String -> AcidState ShoeStorage -> AppConf)
 initConf = do
-  env <- getEnvironment
-  let ub = fromMaybe "/" (lookup urlBaseEnvKey env)
   sd <- Paths_shoes.getDataFileName "static/flag"
-  return $ AppConf ub (takeDirectory sd)
+  return $ AppConf (takeDirectory sd)
 
 run :: (AppConf -> IO ()) -> IO ()
 run action = bracket

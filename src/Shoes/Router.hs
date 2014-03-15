@@ -19,4 +19,4 @@ router conf = msum [
     , dir "static" $ serveDirectory DisableBrowsing [] (staticDir conf)
     , dir "img" $ serveDirectory DisableBrowsing [] (imgsDir conf)
     , seeOther homeFullPath (toResponse())
-  ] where homeFullPath = (urlBase conf) ++ home
+  ] where homeFullPath = "/" ++ home

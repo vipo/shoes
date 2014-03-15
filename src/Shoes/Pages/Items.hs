@@ -9,15 +9,14 @@ import Data.String(fromString)
 
 import Shoes.Storage
 import Shoes.Pages.Common(header)
-import Shoes.Environment
 
-page :: AppConf -> [ShoeData] -> H.Html
-page conf shoes = header conf $ do
+page :: [ShoeData] -> H.Html
+page shoes = header $ do
   H.h1 "Items"
   H.ul $ do
     forM_ shoes renderShoe
 
 renderShoe :: ShoeData -> H.Html
 renderShoe shoe = do
-  H.li $ H.a ! A.href (fromString ("item/" ++ (show (shoeId shoe)))) $
+  H.li $ H.a ! A.href (fromString ("/item/" ++ (show (shoeId shoe)))) $
     (fromString (description shoe))
