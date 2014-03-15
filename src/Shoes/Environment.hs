@@ -16,14 +16,18 @@ urlBaseEnvKey = "SHOES_URL_BASE"
 workDirEnvKey :: String
 workDirEnvKey = "SHOES_WORK_DIR"
 
+fileServerEnvKey :: String
+fileServerEnvKey = "SHOES_FILE_SERVER"
+
 data AppConf = AppConf {
     urlBase :: String
   , workDir :: String
   , imgsDir :: String
+  , fileServer :: String
   , acidState :: AcidState ShoeStorage
 }
 
-initDirs :: (String -> String -> AcidState ShoeStorage -> AppConf) -> IO (AcidState ShoeStorage -> AppConf)
+initDirs :: (String -> String -> String -> AcidState ShoeStorage -> AppConf) -> IO (AcidState ShoeStorage -> AppConf)
 initDirs conf = do
   env <- getEnvironment
   let workd = fromMaybe "/var/tmp/shoes/" (lookup workDirEnvKey env)
@@ -31,9 +35,10 @@ initDirs conf = do
   setCurrentDirectory workd
   let imgsd = workd ++ "imgs/"
   createDirectoryIfMissing False imgsd
-  return $ conf workd imgsd
+  let fsrvr = fromMaybe ("file://" ++ imgsd) (lookup fileServerEnvKey env)
+  return $ conf workd imgsd fsrvr
 
-initConf :: IO (String -> String -> AcidState ShoeStorage -> AppConf)
+initConf :: IO (String -> String -> String -> AcidState ShoeStorage -> AppConf)
 initConf = do
   env <- getEnvironment
   let ub = fromMaybe "/" (lookup urlBaseEnvKey env)

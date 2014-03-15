@@ -9,7 +9,7 @@ import Control.Monad.State(get, put)
 import Data.Data(Data,Typeable)
 import Data.Acid(Query, Update, makeAcidic)
 import Data.SafeCopy(base, deriveSafeCopy, SafeCopy)
-import Data.IxSet(Indexable(..), IxSet, (@>), Proxy(..), ixFun, ixSet, toDescList, insert)
+import Data.IxSet(Indexable(..), IxSet, (@>), (@=), Proxy(..), ixFun, ixSet, getOne, toDescList, insert)
 
 type ShoePhotoFileName = String
 
@@ -36,6 +36,11 @@ fetchAll = do
   ShoeStorage{..} <- ask
   return $ toDescList (Proxy :: Proxy ShoeId) $ shoeSet @> (ShoeId 0)
 
+fetchOne :: ShoeId -> Query ShoeStorage (Maybe ShoeData)
+fetchOne shoeId = do
+  ShoeStorage{..} <- ask
+  return $ getOne $ shoeSet @= shoeId
+
 insertShoe :: ShoeData -> Update ShoeStorage Integer
 insertShoe shoe = do
   s <- get
@@ -46,7 +51,7 @@ insertShoe shoe = do
   }
   return newId
 
-$(makeAcidic ''ShoeStorage ['fetchAll, 'insertShoe])
+$(makeAcidic ''ShoeStorage ['fetchAll, 'fetchOne, 'insertShoe])
 
 instance Indexable ShoeData where
   empty = ixSet

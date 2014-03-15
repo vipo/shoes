@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
-module Shoes.Controller(postShoeAsJson, listShoes) where
+module Shoes.Controller(postShoeAsJson, listShoes, showShoe) where
 
-import Happstack.Server (ok, badRequest, Response, toResponse)
+import Happstack.Server (notFound, ok, badRequest, Response, toResponse, FromReqURI(..))
 import Happstack.Server.SimpleHTTP (ServerPart, askRq, takeRequestBody, unBody)
 import qualified Data.ByteString.Lazy.Char8 as L
 import qualified Data.ByteString.Lazy as B
@@ -14,9 +14,10 @@ import Control.Monad.IO.Class (liftIO)
 import Control.Monad (liftM, mzero)
 import Control.Applicative ((<*>), (<$>))
 
-import Shoes.Storage(ShoeData(ShoeData), ShoeId, ShoePhotoFileName, InsertShoe(..), FetchAll(..), ShoeId(..))
+import Shoes.Storage(ShoeData(ShoeData), ShoeId, ShoePhotoFileName, InsertShoe(..), FetchAll(..), ShoeId(..), FetchOne(..))
 import Shoes.Environment
 import qualified Shoes.Pages.Items as Items
+import qualified Shoes.Pages.Item as Item
 
 data JsonRequest = JsonRequest {
     description :: String
@@ -32,6 +33,19 @@ instance FromJSON JsonRequest where
     (v .: "size") <*>
     liftM BL.decode (v .: "photo")
   parseJSON _ = mzero
+
+instance FromReqURI ShoeId where
+  fromReqURI no =
+    case (reads no) of
+      ((shoeNo, ""):_) -> Just (ShoeId shoeNo)
+      _ -> Nothing
+
+showShoe :: AppConf -> ShoeId -> ServerPart Response
+showShoe conf shoeId = do
+  shoe <- query' (acidState conf) $ FetchOne shoeId
+  case shoe of
+    Nothing -> notFound (toResponse())
+    Just s -> ok $ toResponse $ Item.page conf s
 
 listShoes :: AppConf-> ServerPart Response
 listShoes conf = do

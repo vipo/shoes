@@ -1,24 +1,22 @@
 {-# LANGUAGE OverloadedStrings #-}
-module Shoes.Pages.Items where
+module Shoes.Pages.Items(page) where
 
 import Control.Monad (forM_, when)
 import Text.Blaze ((!))
 import qualified Text.Blaze.Html4.Strict as H
 import qualified Text.Blaze.Html4.Strict.Attributes as A
+import Data.String(fromString)
 
 import Shoes.Storage
+import Shoes.Pages.Common(header)
 
 page :: [ShoeData] -> H.Html
-page shoes = H.docTypeHtml $ do
-  H.head $ do
-    H.title $ "Shoes"
-    H.link ! A.rel "stylesheet" ! A.href "http://yui.yahooapis.com/pure/0.4.2/pure-min.css"
-    H.meta ! A.name "viewport" ! A.content "width=device-width, initial-scale=1.0"
-  H.body $ do
-  	H.h1 "Items"
-  	H.ul $ do
-  	  forM_ shoes renderShoe
+page shoes = header $ do
+  H.h1 "Items"
+  H.ul $ do
+    forM_ shoes renderShoe
 
 renderShoe :: ShoeData -> H.Html
 renderShoe shoe = do
-  H.li "fsfsdf"
+  H.li $ H.a ! A.href (fromString ("item/" ++ (show (shoeId shoe)))) $
+    (fromString (description shoe))
