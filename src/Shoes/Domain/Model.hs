@@ -11,11 +11,18 @@ import Data.SafeCopy(SafeCopy)
 type ShoePhotoFileName = String
 
 newtype ShoeId = ShoeId Integer
-  deriving (Eq, Ord, Data, Typeable, SafeCopy, Show)
+  deriving (Eq, Ord, Data, Typeable, SafeCopy)
+
+instance Show ShoeId where
+  show (ShoeId i) = show i
+
+data PersistedShoeData = PersistedShoeData {
+  shoeId :: Integer
+  , shoeData :: ShoeData
+} deriving (Eq, Ord, Show, Data, Typeable)
 
 data ShoeData = ShoeData {
-    shoeId :: Integer
-  , description :: String
+  description :: String
   , color :: String
   , size :: String
   , photoFileName :: ShoePhotoFileName
@@ -23,5 +30,5 @@ data ShoeData = ShoeData {
 
 data ShoeStorage = ShoeStorage {
     lastId :: Integer
-  , shoeSet :: IxSet ShoeData
+  , persistedShoeData :: IxSet PersistedShoeData
 } deriving (Eq, Ord, Show, Data, Typeable)

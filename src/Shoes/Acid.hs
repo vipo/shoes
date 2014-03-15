@@ -14,31 +14,32 @@ import Data.IxSet(Indexable(..), (@>), (@=), Proxy(..), ixFun, ixSet, getOne, to
 import Shoes.Domain.Model
 
 $(deriveSafeCopy 0 'base ''ShoeData)
+$(deriveSafeCopy 0 'base ''PersistedShoeData)
 $(deriveSafeCopy 0 'base ''ShoeStorage)
 
-fetchAll :: Query ShoeStorage [ShoeData]
+fetchAll :: Query ShoeStorage [PersistedShoeData]
 fetchAll = do
   ShoeStorage{..} <- ask
-  return $ toDescList (Proxy :: Proxy ShoeId) $ shoeSet @> (ShoeId 0)
+  return $ toDescList (Proxy :: Proxy ShoeId) $ persistedShoeData @> (ShoeId 0)
 
-fetchOne :: ShoeId -> Query ShoeStorage (Maybe ShoeData)
+fetchOne :: ShoeId -> Query ShoeStorage (Maybe PersistedShoeData)
 fetchOne shoeId = do
   ShoeStorage{..} <- ask
-  return $ getOne $ shoeSet @= shoeId
+  return $ getOne $ persistedShoeData @= shoeId
 
-insertShoe :: ShoeData -> Update ShoeStorage Integer
+insertShoe :: ShoeData -> Update ShoeStorage ShoeId
 insertShoe shoe = do
   s <- get
   let newId = succ $ lastId s
   put $ s {
       lastId = newId
-    , shoeSet = insert (shoe { shoeId = newId }) (shoeSet s)
+    , persistedShoeData = insert (PersistedShoeData newId shoe) (persistedShoeData s)
   }
-  return newId
+  return $ ShoeId newId
 
 $(makeAcidic ''ShoeStorage ['fetchAll, 'fetchOne, 'insertShoe])
 
-instance Indexable ShoeData where
+instance Indexable PersistedShoeData where
   empty = ixSet
     [ ixFun $ \bp -> [ ShoeId (shoeId bp) ] ]
 

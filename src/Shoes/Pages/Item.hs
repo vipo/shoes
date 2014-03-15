@@ -9,8 +9,8 @@ import Data.String(fromString)
 import Shoes.Domain.Model
 import Shoes.Pages.Common(header)
 
-page :: ShoeData -> H.Html
-page shoe = header $ do
+page :: PersistedShoeData -> H.Html
+page (PersistedShoeData _ shoe) = header $ do
   H.h1 (fromString(description shoe))
   H.div ! A.class_ "pure-g-r" $ do
     H.div ! A.class_ "pure-u-2-5" $ shoeImg shoe

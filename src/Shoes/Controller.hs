@@ -63,7 +63,7 @@ postShoeAsJson conf = do
     Nothing -> badRequestMsg "Could not parse json request"
     Just o -> case (photo o) of
       Left m -> badRequestMsg $ "Bad photo encoding: " ++ m
-      Right b -> storeData conf (newShoe (description o) (color o) (size o)) b
+      Right b -> storeData conf (ShoeData (description o) (color o) (size o)) b
 
 storeData :: AppConf -> (ShoePhotoFileName -> ShoeData) -> B.ByteString -> ServerPart Response
 storeData conf shoeData photoBytes = do
@@ -76,14 +76,11 @@ storeData conf shoeData photoBytes = do
 
 getBodyBytes :: ServerPart L.ByteString
 getBodyBytes = do
-  req  <- askRq 
-  body <- liftIO $ takeRequestBody req 
-  case body of 
-    Just rqbody -> return . unBody $ rqbody 
+  req  <- askRq
+  body <- liftIO $ takeRequestBody req
+  case body of
+    Just rqbody -> return . unBody $ rqbody
     Nothing -> return L.empty
-
-newShoe :: String -> String -> String -> ShoePhotoFileName -> ShoeData
-newShoe = ShoeData (-1) -- this fake id will be replaced by an unique one on persistence
 
 badRequestMsg :: String -> ServerPart Response
 badRequestMsg s = badRequest $ toResponse (L.pack s)

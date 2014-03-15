@@ -10,13 +10,13 @@ import Data.String(fromString)
 import Shoes.Domain.Model
 import Shoes.Pages.Common(header)
 
-page :: [ShoeData] -> H.Html
+page :: [PersistedShoeData] -> H.Html
 page shoes = header $ do
   H.h1 "Items"
   H.ul $ do
     forM_ shoes renderShoe
 
-renderShoe :: ShoeData -> H.Html
-renderShoe shoe = do
-  H.li $ H.a ! A.href (fromString ("/item/" ++ (show (shoeId shoe)))) $
-    (fromString (description shoe))
+renderShoe :: PersistedShoeData -> H.Html
+renderShoe (PersistedShoeData i s) = do
+  H.li $ H.a ! A.href (fromString ("/item/" ++ show (i))) $
+    (fromString (description s))
